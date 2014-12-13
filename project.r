@@ -5,15 +5,18 @@ s3 <- unlist(read.csv("yhoo.csv")[2], use.names = FALSE)
 s4 <- unlist(read.csv("ibm.csv")[2], use.names = FALSE)
 
 # initial capital
-V = 1000000
+V <- 1000000
 
-weight = 0.25
+weight <- 0.25
+
+# length
+n <- length(s1)
 
 # number of shares
-lambda1 <- V*weight/s1[1]
-lambda2 <- V*weight/s2[1]
-lambda3 <- V*weight/s3[1]
-lambda4 <- V*weight/s4[1]
+lambda1 <- V*weight/s1[n]
+lambda2 <- V*weight/s2[n]
+lambda3 <- V*weight/s3[n]
+lambda4 <- V*weight/s4[n]
 
 lambda <- c(lambda1, lambda2, lambda3, lambda4)
 
@@ -45,7 +48,7 @@ VAR95 <- quantile(L, 0.95)
 
 # Component VAR
 
-weightComponent = 1/3
+weightComponent <- 1/3
 
 VAR99Component <- c()
 VAR95Component <- c()
@@ -71,25 +74,42 @@ for(j in 1:4) {
 }
 
 # Linear approximation of loses
-LMarginal <- c()
+LLinear <- c()
 
 # vector of weights
 W <- c(weight, weight, weight, weight)
 
 for (i in 1:n-1) {
-  LMarginal[i] <- -V*(W %*% X[i,])
+  LLinear[i] <- -V*(W %*% X[i,])
 }
 
-VAR99LinearLoses <- quantile(LMarginal, 0.99)
-VAR95LinearLoses <- quantile(LMarginal, 0.95)
+VAR99LinearLoses <- quantile(LLinear, 0.99)
+VAR95LinearLoses <- quantile(LLinear, 0.95)
 
 # Marignal VAR
 
 # covariance matrix of log returns
-SigmaMatrix = cov(X)
+SigmaMatrix <- cov(X)
 
-# little sigma
-sigmaSquared = (t(W) %*% Sigma %*% W)[1,1]
+# little sigma; result of multiplication is 1x1 matrix so we have to take that number explicitly
+sigmaSquared <- (t(W) %*% SigmaMatrix %*% W)[1,1]
 
-VAR99Marginal <- (VAR99LinearLoses/V) * (Sigma %*% W)/sigmaSquared
-VAR95Marginal <- (VAR95LinearLoses/V) * (Sigma %*% W)/sigmaSquared
+VAR99Marginal <- (VAR99LinearLoses/V) * (SigmaMatrix %*% W)/sigmaSquared
+VAR95Marginal <- (VAR95LinearLoses/V) * (SigmaMatrix %*% W)/sigmaSquared
+
+# Variance-covariance method
+
+mu <- colMeans(X)
+
+XHat <- cbind(X[,1] - mu[1], X[,2] - mu[2], X[,3] - mu[3], X[,4] - mu[4])
+
+SigmaHat <- 1/(n-1) * (t(XHat) %*% XHat)
+
+a <- V*W
+
+sigma <- sqrt(t(a) %*% SigmaHat %*% a)
+
+v <- t(a) %*% mu
+
+VAR99VC <- v + sigma*qnorm(0.99, mean = 0, sd=1)
+VAR95VC <- v + sigma*qnorm(0.95, mean = 0, sd=1)
