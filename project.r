@@ -13,10 +13,10 @@ weight <- 0.25
 n <- length(s1)
 
 # number of shares
-lambda1 <- V*weight/s1[n]
-lambda2 <- V*weight/s2[n]
-lambda3 <- V*weight/s3[n]
-lambda4 <- V*weight/s4[n]
+lambda1 <- V*weight/s1[1]
+lambda2 <- V*weight/s2[1]
+lambda3 <- V*weight/s3[1]
+lambda4 <- V*weight/s4[1]
 
 lambda <- c(lambda1, lambda2, lambda3, lambda4)
 
