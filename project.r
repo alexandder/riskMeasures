@@ -13,10 +13,10 @@ weight <- 0.25
 n <- length(s1)
 
 # number of shares
-lambda1 <- V*weight/s1[1]
-lambda2 <- V*weight/s2[1]
-lambda3 <- V*weight/s3[1]
-lambda4 <- V*weight/s4[1]
+lambda1 <- round(V*weight/s1[n])
+lambda2 <- round(V*weight/s2[n])
+lambda3 <- round(V*weight/s3[n])
+lambda4 <- round(V*weight/s4[n])
 
 lambda <- c(lambda1, lambda2, lambda3, lambda4)
 
@@ -30,7 +30,6 @@ S <- cbind(s1, s2, s3, s4)
 # matrix of log returns
 X <- cbind(calculateLogReturns(s1), calculateLogReturns(s2), calculateLogReturns(s3), calculateLogReturns(s4))
 
-# L1 <- -(lambda1*s1[1]*(exp(X[1,1]) -1) + lambda2*s2[1]*(exp(X[1,2]) - 1) + lambda3*s3[1]*(exp(X[1,3]) - 1) + lambda4*s4[1]*(exp(X[1,4]) - 1))
 
 expMinusOne <- function(x) {
   return(exp(x) - 1)
@@ -58,7 +57,7 @@ for(j in 1:4) {
   SComponent <- S[, -j]
   
   # new number of shares
-  lambdaComponent <- c(V*weightComponent/SComponent[1,1], V*weightComponent/SComponent[1,2], V*weightComponent/SComponent[1,3])
+  lambdaComponent <- c(round(V*weightComponent/SComponent[1,1]), round(V*weightComponent/SComponent[1,2]), round(V*weightComponent/SComponent[1,3]))
   
   # log returns matrix without j-th column
   XComponent <- X[, -j]
