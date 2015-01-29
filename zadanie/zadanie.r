@@ -7,6 +7,9 @@ model <- lm(Y ~ X)
 plot(X,Y)
 abline(lm(Y ~ X), col="red")
 
+# Wspolczynnik determinacji R2 to 0.892, wiec dopasowanie jest dosc dobre
+summary(model)$r.squared
+
 Xpred <- c(369596, 369464, 364634, 354277, 345995, 350588, 323954, 263205, 277046, 263513, 312308, 313005)
 
 a <- coef(model)[2]
